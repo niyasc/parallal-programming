@@ -1,0 +1,30 @@
+#include<stdio.h>
+#include<mpi.h>
+int main(int argc,char *argv[])
+{
+	int sum=0,psum,rank,size,a[100],i,rec[20],psums[5];
+	for(i=0;i<100;i++)
+		a[i]=i;
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
+	MPI_Scatter(a,20,MPI_INT,rec,20,MPI_INT,0,MPI_COMM_WORLD);
+	psum=0;
+	for(i=0;i<20;i++)
+	{
+		psum+=rec[i];
+	}
+	printf("I'm process %d and my sum is %d\n",rank,psum);
+	MPI_Gather(&psum,5,MPI_INT,psums,1,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Finalize();
+	if(rank==0)
+	{
+		for(i=0;i<5;i++)
+		{
+			printf("%d ",psums[i]);
+			sum+=psums[i];
+		}
+		printf("Sum is %d\n",sum);
+	}
+	return 0;
+}

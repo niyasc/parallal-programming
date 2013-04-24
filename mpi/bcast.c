@@ -1,0 +1,12 @@
+#include<stdio.h>
+#include<mpi.h>
+int main(int argc,char *argv[])
+{
+	int value=10,rank;
+	MPI_Init(&argc,&argv);
+	MPI_Bcast(&value,1,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	printf("I'm thread %d and value is %d\n",rank,value);
+	MPI_Finalize();
+	return 0;
+}

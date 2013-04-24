@@ -1,0 +1,25 @@
+#include<stdio.h>
+#include<mpi.h>
+#define n 10
+int main(int argc,char *argv[])
+{
+	int rank,size,i;
+	float area=0.0,x,temp;
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
+	temp=0;
+	for(i=rank;i<n;i+=size)
+	{
+		x=(i+.5)/n;
+		temp+=4/(1+x*x);
+	}
+	MPI_Reduce(&temp,&area,1,MPI_FLOAT,MPI_SUM,0,MPI_COMM_WORLD);
+	MPI_Finalize();
+	if(rank==0)
+	{
+		float pi=area/n;
+		printf("Value of pi is %f\n",pi);
+	}
+	return 0;
+}
